@@ -1,4 +1,13 @@
-## 0.4[Future]
+## 0.4.0 (kaede-inc fork)
+- Forked from upstream so1n/protobuf_to_pydantic v0.3.3.1 by kaede-inc.
+- Package renamed on PyPI to `protobuf-to-pydantic-forked`. Import name remains `protobuf_to_pydantic`.
+- Feat (plugin): generated `IntEnum` classes now emit a `_missing_` classmethod
+  so Pydantic v2 accepts both integer values and protobuf JSON-style enum-name
+  strings (e.g. `"MCP_PROTOCOL_SSE"`) without per-field validators. Invalid
+  strings continue to raise `ValidationError`. Refs upstream issues
+  so1n/protobuf_to_pydantic#114 and #61.
+
+## 0.4[Future] (upstream roadmap, pre-fork)
 - Feature, support protovalidate(proto-gen-validate version >= 1.0.0) rule
 ## 0.3.x[Future]
 - CommentHandler

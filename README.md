@@ -1,4 +1,9 @@
-# protobuf_to_pydantic
+# protobuf-to-pydantic-forked
+
+> **Fork notice**: This is a fork of [so1n/protobuf_to_pydantic](https://github.com/so1n/protobuf_to_pydantic) (Apache-2.0).
+> Maintained by [kaede-inc](https://github.com/kaede-inc) with additional patches not yet merged upstream.
+> See [CHANGELOG.md](./CHANGELOG.md) for fork-specific changes.
+
 Generate Pydantic Model or source code with parameter verification function based on Protobuf file (Proto3).
 
 
