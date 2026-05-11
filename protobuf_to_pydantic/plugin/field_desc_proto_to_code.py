@@ -865,10 +865,44 @@ class FileDescriptorProtoToCode(BaseP2C):
         if class_head_content and class_var_str_list:
             class_head_content += "\n"
         class_head_content += "\n".join(class_var_str_list)
+
+        # Emit a model_serializer that converts IntEnum field values to their
+        # name on JSON output. Combined with the `_missing_` hook emitted by
+        # `_enum()` this lets the model accept both integers and enum-name
+        # strings inbound, and produce enum-name strings outbound — matching
+        # the protobuf JSON spec while keeping the underlying IntEnum class.
+        if not _pydantic_adapter.is_v1:
+            self._add_import_code("pydantic", "model_serializer")
+            self._add_import_code("enum", "IntEnum")
+            inner = " " * (indent + self.code_indent)
+            inner2 = " " * (indent + self.code_indent * 2)
+            inner3 = " " * (indent + self.code_indent * 3)
+            inner4 = " " * (indent + self.code_indent * 4)
+            inner5 = " " * (indent + self.code_indent * 5)
+            class_intenum_serializer_content = (
+                f"{inner}@model_serializer(mode='wrap')\n"
+                f"{inner}def _serialize_intenum_as_name(self, handler):\n"
+                f"{inner2}result = handler(self)\n"
+                f"{inner2}if isinstance(result, dict):\n"
+                f"{inner3}for _k in list(result.keys()):\n"
+                f"{inner4}_v = getattr(self, _k, None)\n"
+                f"{inner4}if isinstance(_v, IntEnum):\n"
+                f"{inner5}result[_k] = _v.name\n"
+                f"{inner2}return result\n"
+            )
+        else:
+            class_intenum_serializer_content = ""
+
         content = "\n".join(
             [
                 i
-                for i in [class_name_content, class_head_content, class_field_content, class_validate_handler_content]
+                for i in [
+                    class_name_content,
+                    class_head_content,
+                    class_field_content,
+                    class_validate_handler_content,
+                    class_intenum_serializer_content,
+                ]
                 if i
             ]
         )

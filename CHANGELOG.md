@@ -1,3 +1,12 @@
+## 0.5.0 (kaede-inc fork)
+- Feat (plugin): every generated message class now emits a
+  `@model_serializer(mode='wrap')` that converts `IntEnum` field values to
+  their `.name` on JSON output. Combined with the `_missing_` hook on
+  generated `IntEnum` classes (introduced in 0.4.0), inbound accepts both
+  integer values and enum-name strings, and outbound always produces enum-
+  name strings — matching the protobuf JSON spec. Pydantic v1 generation is
+  unaffected.
+
 ## 0.4.0 (kaede-inc fork)
 - Forked from upstream so1n/protobuf_to_pydantic v0.3.3.1 by kaede-inc.
 - Package renamed on PyPI to `protobuf-to-pydantic-forked`. Import name remains `protobuf_to_pydantic`.
