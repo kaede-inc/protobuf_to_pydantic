@@ -195,6 +195,18 @@ class FileDescriptorProtoToCode(BaseP2C):
             content += "\n" + desc_content
             for enum_item in enum.value:
                 content += " " * (self.code_indent + indent) + f"{enum_item.name} = {enum_item.number}\n"
+            # Allow string-name input in addition to int values (protobuf JSON spec compatible).
+            # Pydantic v2 honors `_missing_` on IntEnum, so this single hook handles both.
+            inner_indent = " " * (self.code_indent + indent)
+            content += "\n"
+            content += inner_indent + "@classmethod\n"
+            content += inner_indent + "def _missing_(cls, value: object) -> 'IntEnum | None':\n"
+            content += " " * (self.code_indent * 2 + indent) + "if isinstance(value, str):\n"
+            content += " " * (self.code_indent * 3 + indent) + "try:\n"
+            content += " " * (self.code_indent * 4 + indent) + "return cls[value]\n"
+            content += " " * (self.code_indent * 3 + indent) + "except KeyError:\n"
+            content += " " * (self.code_indent * 4 + indent) + "return None\n"
+            content += " " * (self.code_indent * 2 + indent) + "return None\n"
             content_list.append(content)
         return content_list
 
